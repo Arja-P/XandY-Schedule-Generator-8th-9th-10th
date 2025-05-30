@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X and Y Daily Schedule Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-width: 120px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            color: #333;
+            margin: 0;
+            font-size: 28px;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+            margin-right: 20px;
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        input[type="date"] {
+            font-family: inherit;
+        }
+        .button-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 15px;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #generate-btn {
+            background-color: #3f51b5;
+            color: white;
+        }
+        #generate-btn:hover {
+            background-color: #303f9f;
+        }
+        #reset-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        #reset-btn:hover {
+            background-color: #d32f2f;
+        }
+        .preview-container {
+            margin-top: 30px;
+            display: none;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .preview-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        #schedule-preview {
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+        .download-row {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #download-btn {
+            background-color: #4caf50;
+            color: white;
+        }
+        #download-btn:hover {
+            background-color: #388e3c;
+        }
+        .custom-topic-container {
+            display: none;
+            margin-top: 10px;
+        }
+        #topic-type-select {
+            margin-bottom: 10px;
+        }
+        #custom-topic-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .template-selection {
+            margin-bottom: 20px;
+        }
+        .template-preview {
+            max-width: 200px;
+            margin-top: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .template-preview:hover {
+            border-color: #3f51b5;
+            box-shadow: 0 0 10px rgba(63, 81, 181, 0.3);
+        }
+        .template-preview.selected {
+            border-color: #3f51b5;
+            box-shadow: 0 0 15px rgba(63, 81, 181, 0.5);
+        }
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .template-option {
+            text-align: center;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .template-option:hover {
+            border-color: #3f51b5;
+            background-color: #f8f9ff;
+        }
+        .template-option.selected {
+            border-color: #3f51b5;
+            background-color: #e8eaf6;
+        }
+        .template-name {
+            font-weight: 600;
+            margin-top: 10px;
+            color: #333;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgZmlsbD0iI2ZmZGQ3NyIgLz48cGF0aCBkPSJNMzAgMzBMNzAgNzAiIHN0cm9rZT0iI2ZmNDQ1NSIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNNzAgMzBMMzAgNzAiIHN0cm9rZT0iI2ZmNDQ1NSIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=" alt="X and Y Learning" class="logo">
+            <h1>Daily Schedule Generator</h1>
+        </div>
+
+        <!-- Template Selection Section -->
+        <div class="form-row template-selection">
+            <div class="form-group" style="flex: 1; margin-right: 0;">
+                <label>Select Template</label>
+                <div class="template-grid" id="template-grid">
+                    <!-- Templates will be loaded here -->
+                </div>
+                <div class="loading" id="template-loading">Loading templates...</div>
+            </div>
+        </div>
+
+        <form id="schedule-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="class-select">Class</label>
+                    <select id="class-select" required>
+                        <option value="">Select Class</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="board-select">Board</label>
+                    <select id="board-select" required>
+                        <option value="">Select Board</option>
+                        <option value="State">State</option>
+                        <option value="CBSE">CBSE</option>
+                        <option value="GCC">GCC</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="subject-select">Subject</label>
+                    <select id="subject-select" required>
+                        <option value="">Select Subject</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="chapter-input">Chapter Name</label>
+                    <input type="text" id="chapter-input" placeholder="Enter chapter name" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="topic-select">Topic</label>
+                    <select id="topic-select" required>
+                        <option value="CUSTOM">Custom Topic</option>
+                        <option value="LIVE CLASS">LIVE CLASS</option>
+                        <option value="WORKBOOK DAY">WORKBOOK DAY</option>
+                        <option value="LIVE CLASS & WORK BOOK DAY">LIVE CLASS & WORK BOOK DAY</option>
+                        <option value="EXAM">EXAM</option>
+                    </select>
+                    <div class="custom-topic-container" id="custom-topic-container">
+                        <input type="text" id="custom-topic-input" placeholder="Enter custom topic">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="date-input">Date</label>
+                    <input type="date" id="date-input" required>
+                </div>
+            </div>
+
+            <div class="button-row">
+                <button type="button" id="generate-btn">Generate Schedule</button>
+                <button type="button" id="reset-btn">Reset Form</button>
+            </div>
+        </form>
+
+        <div class="preview-container" id="preview-container">
+            <h2 class="preview-title">Preview</h2>
+            <canvas id="schedule-preview"></canvas>
+            <div class="download-row">
+                <button type="button" id="download-btn">Download Schedule</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date as default
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            document.getElementById('date-input').value = dateString;
+            
+            // Initialize elements
+            const classSelect = document.getElementById('class-select');
+            const subjectSelect = document.getElementById('subject-select');
+            const topicSelect = document.getElementById('topic-select');
+            const customTopicContainer = document.getElementById('custom-topic-container');
+            const customTopicInput = document.getElementById('custom-topic-input');
+            const generateBtn = document.getElementById('generate-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const previewContainer = document.getElementById('preview-container');
+            const schedulePreview = document.getElementById('schedule-preview');
+            const downloadBtn = document.getElementById('download-btn');
+            const templateGrid = document.getElementById('template-grid');
+            const templateLoading = document.getElementById('template-loading');
+            
+            // Predefined templates with their configurations
+            // Replace these URLs with your actual GitHub repository URLs
+            const predefinedTemplates = [
+                {
+                    id: 'template1',
+                    name: 'Classic Blue',
+                    url: 'https://raw.githubusercontent.com/yourusername/yourrepo/main/templates/template1.png',
+                    coordinates: {
+                        courseBatch: { x: 900, y: 225, align: 'right', fontSize: 60, color: '#3F51B5' },
+                        date: { x: 575, y: 450, align: 'center', fontSize: 50, color: '#FFFFFF' },
+                        subject: { x: 245, y: 645, align: 'center', fontSize: 40, color: '#FFFFFF' },
+                        chapter: { x: 550, y: 720, align: 'center', maxWidth: 670, maxHeight: 120, fontSize: 55, color: '#FFFFFF' },
+                        topic: { x: 550, y: 860, align: 'center', maxWidth: 670, maxHeight: 120, fontSize: 40, color: '#FFD54F' }
+                    }
+                },
+                {
+                    id: 'template2',
+                    name: 'Modern Green',
+                    url: 'https://raw.githubusercontent.com/yourusername/yourrepo/main/templates/template2.png',
+                    coordinates: {
+                        courseBatch: { x: 800, y: 200, align: 'right', fontSize: 55, color: '#4CAF50' },
+                        date: { x: 540, y: 400, align: 'center', fontSize: 45, color: '#FFFFFF' },
+                        subject: { x: 200, y: 600, align: 'center', fontSize: 38, color: '#FFFFFF' },
+                        chapter: { x: 540, y: 680, align: 'center', maxWidth: 650, maxHeight: 110, fontSize: 50, color: '#FFFFFF' },
+                        topic: { x: 540, y: 820, align: 'center', maxWidth: 650, maxHeight: 110, fontSize: 38, color: '#81C784' }
+                    }
+                },
+                {
+                    id: 'template3',
+                    name: 'Dark Orange',
+                    url: 'https://raw.githubusercontent.com/yourusername/yourrepo/main/templates/template3.png',
+                    coordinates: {
+                        courseBatch: { x: 850, y: 180, align: 'right', fontSize: 58, color: '#FF5722' },
+                        date: { x: 540, y: 380, align: 'center', fontSize: 48, color: '#FFFFFF' },
+                        subject: { x: 270, y: 580, align: 'center', fontSize: 42, color: '#FFFFFF' },
+                        chapter: { x: 540, y: 660, align: 'center', maxWidth: 680, maxHeight: 130, fontSize: 52, color: '#FFFFFF' },
+                        topic: { x: 540, y: 800, align: 'center', maxWidth: 680, maxHeight: 130, fontSize: 42, color: '#FFB74D' }
+                    }
+                },
+                {
+                    id: 'template4',
+                    name: 'Purple Gradient',
+                    url: 'https://raw.githubusercontent.com/yourusername/yourrepo/main/templates/template4.png',
+                    coordinates: {
+                        courseBatch: { x: 880, y: 210, align: 'right', fontSize: 62, color: '#9C27B0' },
+                        date: { x: 540, y: 420, align: 'center', fontSize: 52, color: '#FFFFFF' },
+                        subject: { x: 220, y: 620, align: 'center', fontSize: 44, color: '#FFFFFF' },
+                        chapter: { x: 540, y: 700, align: 'center', maxWidth: 660, maxHeight: 125, fontSize: 54, color: '#FFFFFF' },
+                        topic: { x: 540, y: 840, align: 'center', maxWidth: 660, maxHeight: 125, fontSize: 44, color: '#E1BEE7' }
+                    }
+                },
+                {
+                    id: 'template5',
+                    name: 'Minimalist Red',
+                    url: 'https://raw.githubusercontent.com/yourusername/yourrepo/main/templates/template5.png',
+                    coordinates: {
+                        courseBatch: { x: 820, y: 190, align: 'right', fontSize: 56, color: '#F44336' },
+                        date: { x: 540, y: 390, align: 'center', fontSize: 46, color: '#212121' },
+                        subject: { x: 250, y: 590, align: 'center', fontSize: 40, color: '#212121' },
+                        chapter: { x: 540, y: 670, align: 'center', maxWidth: 640, maxHeight: 115, fontSize: 48, color: '#212121' },
+                        topic: { x: 540, y: 810, align: 'center', maxWidth: 640, maxHeight: 115, fontSize: 40, color: '#F44336' }
+                    }
+                }
+            ];
+            
+            let selectedTemplate = predefinedTemplates[0]; // Default to first template
+            let loadedTemplateImages = new Map();
+            
+            // Subject mapping by class
+            const subjectsByClass = {
+                '06': ['Math', 'Science I', 'Science II', 'Science III'],
+                '07': ['Math', 'Science I', 'Science II', 'Science III'],
+                '08': ['Math', 'Physics', 'Chemistry', 'Biology', 'Social', 'Hindi'],
+                '09': ['Math', 'Physics', 'Chemistry', 'Biology', 'Social', 'Hindi'],
+                '10': ['Math', 'Physics', 'Chemistry', 'Biology', 'Social', 'Hindi']
+            };
+
+            // Load predefined templates
+            function loadTemplates() {
+                templateLoading.style.display = 'block';
+                let loadedCount = 0;
+                const totalTemplates = predefinedTemplates.length;
+                
+                predefinedTemplates.forEach((template, index) => {
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous'; // Handle CORS if needed
+                    
+                    img.onload = function() {
+                        loadedTemplateImages.set(template.id, img);
+                        loadedCount++;
+                        
+                        // Create template option
+                        const templateOption = document.createElement('div');
+                        templateOption.className = 'template-option';
+                        templateOption.dataset.templateId = template.id;
+                        
+                        if (index === 0) {
+                            templateOption.classList.add('selected');
+                        }
+                        
+                        templateOption.innerHTML = `
+                            <img src="${template.url}" alt="${template.name}" class="template-preview">
+                            <div class="template-name">${template.name}</div>
+                        `;
+                        
+                        templateOption.addEventListener('click', function() {
+                            // Remove selected class from all templates
+                            document.querySelectorAll('.template-option').forEach(opt => {
+                                opt.classList.remove('selected');
+                            });
+                            
+                            // Add selected class to clicked template
+                            this.classList.add('selected');
+                            
+                            // Update selected template
+                            selectedTemplate = predefinedTemplates.find(t => t.id === this.dataset.templateId);
+                        });
+                        
+                        templateGrid.appendChild(templateOption);
+                        
+                        // Hide loading when all templates are loaded
+                        if (loadedCount === totalTemplates) {
+                            templateLoading.style.display = 'none';
+                        }
+                    };
+                    
+                    img.onerror = function() {
+                        console.error(`Failed to load template: ${template.name}`);
+                        loadedCount++;
+                        
+                        // Create fallback template option
+                        const templateOption = document.createElement('div');
+                        templateOption.className = 'template-option';
+                        templateOption.dataset.templateId = template.id;
+                        templateOption.style.backgroundColor = '#f0f0f0';
+                        templateOption.innerHTML = `
+                            <div style="height: 150px; display: flex; align-items: center; justify-content: center; color: #666;">
+                                Template Not Available
+                            </div>
+                            <div class="template-name">${template.name}</div>
+                        `;
+                        templateGrid.appendChild(templateOption);
+                        
+                        if (loadedCount === totalTemplates) {
+                            templateLoading.style.display = 'none';
+                        }
+                    };
+                    
+                    img.src = template.url;
+                });
+            }
+
+            // Update subjects when class changes
+            classSelect.addEventListener('change', updateSubjects);
+
+            function updateSubjects() {
+                const selectedClass = classSelect.value;
+                subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+                
+                if (selectedClass && subjectsByClass[selectedClass]) {
+                    subjectsByClass[selectedClass].forEach(subject => {
+                        const option = document.createElement('option');
+                        option.value = subject;
+                        option.textContent = subject;
+                        subjectSelect.appendChild(option);
+                    });
+                }
+            }
+
+            // Toggle custom topic input based on topic selection
+            topicSelect.addEventListener('change', function() {
+                if (this.value === 'CUSTOM') {
+                    customTopicContainer.style.display = 'block';
+                    customTopicInput.required = true;
+                } else {
+                    customTopicContainer.style.display = 'none';
+                    customTopicInput.required = false;
+                }
+            });
+
+            // Set custom topic as default
+            topicSelect.value = 'CUSTOM';
+            customTopicContainer.style.display = 'block';
+            customTopicInput.required = true;
+
+            // Reset form
+            resetBtn.addEventListener('click', function() {
+                document.getElementById('schedule-form').reset();
+                document.getElementById('date-input').value = dateString;
+                updateSubjects();
+                previewContainer.style.display = 'none';
+                topicSelect.value = 'CUSTOM';
+                customTopicContainer.style.display = 'block';
+                
+                // Reset template selection to first one
+                document.querySelectorAll('.template-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                document.querySelector('.template-option').classList.add('selected');
+                selectedTemplate = predefinedTemplates[0];
+            });
+
+            // Generate schedule preview
+            generateBtn.addEventListener('click', function() {
+                const form = document.getElementById('schedule-form');
+                
+                // Basic form validation
+                if (!form.checkValidity()) {
+                    alert('Please fill all required fields!');
+                    return;
+                }
+                
+                if (topicSelect.value === 'CUSTOM' && !customTopicInput.value.trim()) {
+                    alert('Please enter a custom topic!');
+                    return;
+                }
+                
+                if (!selectedTemplate) {
+                    alert('Please select a template!');
+                    return;
+                }
+                
+                generateScheduleImage();
+                previewContainer.style.display = 'block';
+                scrollToElement(previewContainer);
+            });
+
+            // Function to calculate optimal font size for given text and constraints
+            function getOptimalFontSize(ctx, text, maxWidth, maxHeight, minFontSize = 20, maxFontSize = 80) {
+                let fontSize = maxFontSize;
+                
+                while (fontSize >= minFontSize) {
+                    ctx.font = `bold ${fontSize}px Arial`;
+                    const metrics = ctx.measureText(text);
+                    const textWidth = metrics.width;
+                    const textHeight = fontSize * 1.2;
+                    
+                    if (textWidth <= maxWidth && textHeight <= maxHeight) {
+                        return fontSize;
+                    }
+                    
+                    fontSize -= 2;
+                }
+                
+                return minFontSize;
+            }
+
+            // Function to calculate optimal font size for multi-line text
+            function getOptimalFontSizeForMultiLine(ctx, text, maxWidth, maxHeight, minFontSize = 20, maxFontSize = 60) {
+                let fontSize = maxFontSize;
+                
+                while (fontSize >= minFontSize) {
+                    ctx.font = `bold ${fontSize}px Arial`;
+                    const lineHeight = fontSize * 1.2;
+                    
+                    const words = text.split(' ');
+                    let lines = 1;
+                    let currentLineWidth = 0;
+                    
+                    for (let word of words) {
+                        const wordWidth = ctx.measureText(word + ' ').width;
+                        
+                        if (currentLineWidth + wordWidth > maxWidth) {
+                            lines++;
+                            currentLineWidth = wordWidth;
+                        } else {
+                            currentLineWidth += wordWidth;
+                        }
+                    }
+                    
+                    const totalHeight = lines * lineHeight;
+                    
+                    if (totalHeight <= maxHeight) {
+                        return fontSize;
+                    }
+                    
+                    fontSize -= 2;
+                }
+                
+                return minFontSize;
+            }
+
+            // Enhanced wrapText function with adaptive font size
+            function wrapTextWithAdaptiveSize(ctx, text, config) {
+                const { x, y, maxWidth, maxHeight, fontSize: initialFontSize } = config;
+                
+                // Calculate optimal font size
+                const optimalFontSize = getOptimalFontSizeForMultiLine(ctx, text, maxWidth, maxHeight, 20, initialFontSize);
+                ctx.font = `bold ${optimalFontSize}px Arial`;
+                
+                const lineHeight = optimalFontSize * 1.2;
+                const words = text.split(' ');
+                let line = '';
+                let currentY = y;
+                
+                for(let n = 0; n < words.length; n++) {
+                    const testLine = line + words[n] + ' ';
+                    const metrics = ctx.measureText(testLine);
+                    const testWidth = metrics.width;
+                    
+                    if (testWidth > maxWidth && n > 0) {
+                        ctx.fillText(line.trim(), x, currentY);
+                        line = words[n] + ' ';
+                        currentY += lineHeight;
+                    } else {
+                        line = testLine;
+                    }
+                }
+                
+                ctx.fillText(line.trim(), x, currentY);
+                return optimalFontSize;
+            }
+
+            // Create and render the schedule image
+            function generateScheduleImage() {
+                const canvas = document.getElementById('schedule-preview');
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas size
+                canvas.width = 1080;
+                canvas.height = 1080;
+                
+                // Get form values
+                const selectedClass = document.getElementById('class-select').value;
+                const selectedBoard = document.getElementById('board-select').value;
+                const selectedSubject = document.getElementById('subject-select').value;
+                const chapterName = document.getElementById('chapter-input').value.toUpperCase();
+                const topicType = document.getElementById('topic-select').value;
+                const customTopic = document.getElementById('custom-topic-input').value;
+                
+                // Format date
+                const dateInput = document.getElementById('date-input').value;
+                const dateObj = new Date(dateInput);
+                const formattedDate = dateObj.toLocaleDateString('en-US', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                }).toUpperCase();
+                
+                // Course batch text
+                const courseBatchText = `${selectedBoard} ${selectedClass}`;
+                
+                // Topic text
+                const topicText = topicType === 'CUSTOM' ? customTopic : topicType;
+                
+                // Get template image
+                const templateImg = loadedTemplateImages.get(selectedTemplate.id);
+                
+                if (!templateImg) {
+                    alert('Template image not loaded. Please try again.');
+                    return;
+                }
+                
+                // Draw template image first
+                ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
+                
+                // Get coordinates for selected template
+                const coords = selectedTemplate.coordinates;
+                
+                // Draw batch text
+                ctx.font = `bold ${coords.courseBatch.fontSize}px Arial`;
+                ctx.fillStyle = coords.courseBatch.color;
+                ctx.textAlign = coords.courseBatch.align;
+                ctx.fillText(courseBatchText, coords.courseBatch.x, coords.courseBatch.y);
+                
+                // Draw date
+                ctx.font = `bold ${coords.date.fontSize}px Arial`;
+                ctx.fillStyle = coords.date.color;
+                ctx.textAlign = coords.date.align;
+                ctx.fillText(formattedDate, coords.date.x, coords.date.y);
+                
+                // Draw subject
+                ctx.font = `bold ${coords.subject.fontSize}px Arial`;
+                ctx.fillStyle = coords.subject.color;
+                ctx.textAlign = coords.subject.align;
+                ctx.fillText(selectedSubject, coords.subject.x, coords.subject.y);
+                
+                // Draw chapter with adaptive font size and word wrapping
+                ctx.fillStyle = coords.chapter.color;
+                ctx.textAlign = coords.chapter.align;
+                wrapTextWithAdaptiveSize(ctx, chapterName.toUpperCase(), coords.chapter);
+                
+                // Draw topic with adaptive font size and word wrapping
+                ctx.fillStyle = coords.topic.color;
+                ctx.textAlign = coords.topic.align;
+                wrapTextWithAdaptiveSize(ctx, topicText.toUpperCase(), coords.topic);
+            }
+
+            // Download functionality
+            downloadBtn.addEventListener('click', function() {
+                const canvas = document.getElementById('schedule-preview');
+                const selectedClass = document.getElementById('class-select').value;
+                const selectedSubject = document.getElementById('subject-select').value;
+                const dateInput = document.getElementById('date-input').value;
+                const dateObj = new Date(dateInput);
+                const formattedDateFilename = dateObj.toLocaleDateString('en-US', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                }).replace(/\//g, '-');
+                
+                const link = document.createElement('a');
+                link.download = `XandY_${selectedClass}_${selectedSubject}_${formattedDateFilename}_${selectedTemplate.name.replace(/\s+/g, '_')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+
+            function scrollToElement(element) {
+                window.scrollTo({
+                    top: element.offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+
+            // Initialize templates on page load
+            loadTemplates();
+        });
+    </script>
+</body>
+</html>
