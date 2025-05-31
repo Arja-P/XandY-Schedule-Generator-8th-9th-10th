@@ -617,36 +617,41 @@
                 
                 // Get coordinates for selected template
                 const coords = selectedTemplate.coordinates;
+                // Draw batch text (if coordinates exist)
+                if (coords.courseBatch) {
+                    ctx.font = `bold ${coords.courseBatch.fontSize}px Arial`;
+                    ctx.fillStyle = coords.courseBatch.color;
+                    ctx.textAlign = coords.courseBatch.align;
+                    ctx.fillText(courseBatchText, coords.courseBatch.x, coords.courseBatch.y);
+                } 
+                // Draw date (if coordinates exist)
+                if (coords.date) {
+                    ctx.font = `bold ${coords.date.fontSize}px Arial`;
+                    ctx.fillStyle = coords.date.color;
+                    ctx.textAlign = coords.date.align;
+                    ctx.fillText(formattedDate, coords.date.x, coords.date.y);
+                }
+                // Draw subject (if coordinates exist)
+                if (coords.subject) {
+                    ctx.font = `bold ${coords.subject.fontSize}px Arial`;
+                    ctx.fillStyle = coords.subject.color;
+                    ctx.textAlign = coords.subject.align;
+                    ctx.fillText(selectedSubject, coords.subject.x, coords.subject.y);
+                }
                 
-                // Draw batch text
-                ctx.font = `bold ${coords.courseBatch.fontSize}px Arial`;
-                ctx.fillStyle = coords.courseBatch.color;
-                ctx.textAlign = coords.courseBatch.align;
-                ctx.fillText(courseBatchText, coords.courseBatch.x, coords.courseBatch.y);
-                
-                // Draw date
-                ctx.font = `bold ${coords.date.fontSize}px Arial`;
-                ctx.fillStyle = coords.date.color;
-                ctx.textAlign = coords.date.align;
-                ctx.fillText(formattedDate, coords.date.x, coords.date.y);
-                
-                // Draw subject
-                ctx.font = `bold ${coords.subject.fontSize}px Arial`;
-                ctx.fillStyle = coords.subject.color;
-                ctx.textAlign = coords.subject.align;
-                ctx.fillText(selectedSubject, coords.subject.x, coords.subject.y);
-                
-                // Draw chapter with adaptive font size and word wrapping
-                ctx.fillStyle = coords.chapter.color;
-                ctx.textAlign = coords.chapter.align;
-                wrapTextWithAdaptiveSize(ctx, chapterName.toUpperCase(), coords.chapter);
-                
-                // Draw topic with adaptive font size and word wrapping
-                ctx.fillStyle = coords.topic.color;
-                ctx.textAlign = coords.topic.align;
-                wrapTextWithAdaptiveSize(ctx, topicText.toUpperCase(), coords.topic);
+                // Draw chapter with adaptive font size and word wrapping (if coordinates exist)
+                if (coords.chapter) {
+                    ctx.fillStyle = coords.chapter.color;
+                    ctx.textAlign = coords.chapter.align;
+                    wrapTextWithAdaptiveSize(ctx, chapterName.toUpperCase(), coords.chapter);
+                }
+                // Draw topic with adaptive font size and word wrapping (if coordinates exist)
+                if (coords.topic) {
+                    ctx.fillStyle = coords.topic.color;
+                    ctx.textAlign = coords.topic.align;
+                    wrapTextWithAdaptiveSize(ctx, topicText.toUpperCase(), coords.topic);
+                }
             }
-
             // Download functionality
             downloadBtn.addEventListener('click', function() {
                 const canvas = document.getElementById('schedule-preview');
