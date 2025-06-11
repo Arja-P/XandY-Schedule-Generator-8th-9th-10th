@@ -578,7 +578,7 @@
                     }
                 }
 
-                //drawTextWithOutline(ctx, line.trim(), x, currentY, color);
+                drawTextWithOutline(ctx, line.trim(), x, currentY, color);
             }
 
             function convertTo12Hour(time24) {
@@ -659,7 +659,7 @@
                     const subjectFontSize = calculateDynamicFontSize(selectedSubject, coords.subject.fontSize, 30);
                     ctx.font = `bold ${subjectFontSize}px Arial`;
                     ctx.textAlign = coords.subject.align;
-                    //drawTextWithOutline(ctx, selectedSubject, coords.subject.x, coords.subject.y, coords.subject.color);
+                    drawTextWithOutline(ctx, selectedSubject, coords.subject.x, coords.subject.y, coords.subject.color);
                 }
 
                 if (coords.chapter && selectedTemplate.fields.includes('chapter')) {
