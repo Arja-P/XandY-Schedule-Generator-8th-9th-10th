@@ -290,7 +290,7 @@
             const predefinedTemplates = [
                 {
                     id: 'dailyschedule',
-                    name: 'DAILY SCHEDULE',
+                    name: 'DAILY SCHEDULE #1',
                     url: 'templates/dailyschedule.jpg',
                     fields: ['course', 'date', 'subject', 'chapter', 'topic'],
                     coordinates: {
@@ -299,6 +299,19 @@
                         subject: { x: 245, y: 605, align: 'center', fontSize: 55, color: '#398F94'  },
                         chapter: {  x: 530, y: 425, align: 'center', maxWidth: 870, maxHeight: 90, fontSize: 70, color: '#398F94' },
                         topic: { x: 820, y: 605, align: 'center', maxWidth: 870, maxHeight: 150, fontSize: 55, color: '#398F94'  }
+                    }
+                },
+		{
+                    id: 'template1',
+                    name: 'DAILY SCHEDULE #2',
+                    url: 'templates/dailyschedule.jpg',
+                    fields: ['course', 'date', 'subject', 'chapter', 'topic'],
+                    coordinates: {
+                        courseBatch: { x: 900, y:225, align: 'center', fontSize: 60, color: '#3F51B5' },
+                        date: {x: 575, y: 450, align: 'center', fontSize: 50, color: '#FFFFFF' },
+                        subject: { x: 245, y: 645, align: 'center', fontSize: 40, color: '#FFFFFF'  },
+                        chapter: {  x: 550, y: 720, align: 'center', maxWidth: 670, maxHeight: 120, fontSize: 40, color: '#FFFFFF' },
+                        topic: { x: 550, y: 860, align: 'center', maxWidth: 670, maxHeight: 120, fontSize: 40, color: '#FFD54F'  }
                     }
                 },
                 {
@@ -353,6 +366,16 @@
                     id: 'workbook',
                     name: 'WORKBOOK',
                     url: 'templates/workbook.png',
+                    fields: ['course', 'date'],
+                    coordinates: {
+                        courseBatch: { x: 1030, y: 70, align: 'right', fontSize: 50, color: '#575757' },
+                        date: { x: 540, y: 320, align: 'center', fontSize: 50, color: '#FFEB2A' }
+                    }
+                },
+		{
+                    id: 'workbook',
+                    name: 'WORKBOOK',
+                    url: 'templates/workbook1.jpg',
                     fields: ['course', 'date'],
                     coordinates: {
                         courseBatch: { x: 1030, y: 70, align: 'right', fontSize: 50, color: '#575757' },
