@@ -205,7 +205,7 @@
                     <label for="board-select">Board</label>
                     <select id="board-select" required>
                         <option value="">Select Board</option>
-                        <option value="State">State</option>
+                        <option value="STATE">State</option>
                         <option value="CBSE">CBSE</option>
                         <option value="GCC">GCC</option>
                     </select>
@@ -307,10 +307,10 @@
                     url: 'templates/newcontent.jpg',
                     fields: ['course', 'date', 'subject', 'chapter'],
                     coordinates: {
-                        courseBatch: { x: 950, y:65, align: 'center', fontSize: 45, color: '#FFD54F' },
-                        date: {x: 180, y: 65, align: 'center', fontSize: 45, color: '#FFD54F' },
-                        subject: {x: 550, y: 340, align: 'center', fontSize: 45, color: '#FFD54F' },
-                        chapter: {x: 555, y: 425, align: 'center', maxWidth: 850, maxHeight: 100, fontSize: 50, color: '#FFD54F' }
+                        courseBatch: { x: 950, y:65, align: 'center', fontSize: 45, color: '#FFFFFF' },
+                        date: {x: 180, y: 65, align: 'center', fontSize: 45, color: '#FFFFFF' },
+                        subject: {x: 550, y: 340, align: 'center', fontSize: 50, color: '#FFEB2A' },
+                        chapter: {x: 555, y: 429, align: 'center', maxWidth: 860, maxHeight: 90, fontSize: 50, color: '#FFEB2A' }
                     }
                 },
                 {
@@ -333,8 +333,8 @@
                     coordinates: {
                         courseBatch: {x: 950, y:65, align: 'center', fontSize: 45, color: '#FFFFFF'  },
                         date: {x: 180, y: 65, align: 'center', fontSize: 45, color: '#FFFFFF' },
-                        subject: {x: 520, y: 320, align: 'center', fontSize: 55, color: '#FFD54F' },
-                        chapter: {x: 532, y: 450, align: 'center', maxWidth: 650, maxHeight: 100, fontSize: 50, color: '#FFD54F' },
+                        subject: {x: 520, y: 320, align: 'center', fontSize: 55, color: '#FFEB2A' },
+                        chapter: {x: 532, y: 457, align: 'center', maxWidth: 650, maxHeight: 100, fontSize: 60, color: '#FFEB2A' },
                         totalQuestions: { x: 350, y: 540, align: 'center', fontSize: 30, color: '#FFFFFF' },
                         totalDuration: { x: 750, y: 540, align: 'center', fontSize: 30, color: '#FFFFFF' }
                     }
@@ -352,11 +352,11 @@
                 {
                     id: 'workbook',
                     name: 'WORKBOOK',
-                    url: 'templates/workbook.png',
+                    url: 'templates/workbook.jpg',
                     fields: ['course', 'date'],
                     coordinates: {
                         courseBatch: { x: 1030, y: 70, align: 'right', fontSize: 50, color: '#575757' },
-                        date: { x: 540, y: 320, align: 'center', fontSize: 55, color: '#FBC40F' }
+                        date: { x: 540, y: 320, align: 'center', fontSize: 50, color: '#FFEB2A' }
                     }
                 }
             ];
@@ -365,9 +365,9 @@
             let loadedTemplateImages = new Map();
 
             const subjectsByClass = {
-                '08': ['Math', 'Physics', 'Chemistry', 'Biology', 'Social', 'Hindi'],
-                '09': ['Math', 'Physics', 'Chemistry', 'Biology', 'Social', 'Hindi'],
-		'10': ['Math', 'Physics', 'Chemistry', 'Biology', 'Social', 'Hindi']
+                '08': ['MATH', 'PHYSICS', 'CHEMISTRY', 'BIOLOGY', 'SOCIAL', 'HINDI'],
+                '09': ['MATH', 'PHYSICS', 'CHEMISTRY', 'BIOLOGY', 'SOCIAL', 'HINDI'],
+		'10': ['MATH', 'PHYSICS', 'CHEMISTRY', 'BIOLOGY', 'SOCIAL', 'HINDI']
             };
 
             function loadTemplates() {
@@ -515,29 +515,6 @@
                 previewContainer.scrollIntoView({ behavior: 'smooth' });
             });
 
-            function drawTextWithOutline(ctx, text, x, y, fillColor, outlineColor = '#000000', outlineWidth = 3) {
-                const originalFillStyle = ctx.fillStyle;
-                const originalStrokeStyle = ctx.strokeStyle;
-                const originalLineWidth = ctx.lineWidth;
-                const originalLineJoin = ctx.lineJoin;
-                const originalMiterLimit = ctx.miterLimit;
-
-                ctx.strokeStyle = outlineColor;
-                ctx.lineWidth = outlineWidth;
-                ctx.lineJoin = 'round';
-                ctx.miterLimit = 2;
-                ctx.strokeText(text, x, y);
-
-                ctx.fillStyle = fillColor;
-                ctx.fillText(text, x, y);
-
-                ctx.fillStyle = originalFillStyle;
-                ctx.strokeStyle = originalStrokeStyle;
-                ctx.lineWidth = originalLineWidth;
-                ctx.lineJoin = originalLineJoin;
-                ctx.miterLimit = originalMiterLimit;
-            }
-
             function calculateDynamicFontSize(text, baseFontSize, minFontSize = 30) {
                 const textLength = text.length;
                 let fontSize;
@@ -560,6 +537,7 @@
                 const dynamicFontSize = calculateDynamicFontSize(text, baseFontSize);
                 
                 ctx.font = `bold ${dynamicFontSize}px Arial`;
+                ctx.fillStyle = color;
                 const lineHeight = dynamicFontSize * 1.2;
                 const words = text.split(' ');
                 let line = '';
@@ -570,7 +548,7 @@
                     const testWidth = ctx.measureText(testLine).width;
 
                     if (testWidth > maxWidth && n > 0) {
-                        drawTextWithOutline(ctx, line.trim(), x, currentY, color);
+                        ctx.fillText(line.trim(), x, currentY);
                         line = words[n] + ' ';
                         currentY += lineHeight;
                     } else {
@@ -578,7 +556,7 @@
                     }
                 }
 
-                drawTextWithOutline(ctx, line.trim(), x, currentY, color);
+                ctx.fillText(line.trim(), x, currentY);
             }
 
             function convertTo12Hour(time24) {
@@ -633,7 +611,8 @@
 
                 ctx.font = `bold ${coords.courseBatch.fontSize}px Arial`;
                 ctx.textAlign = coords.courseBatch.align;
-                drawTextWithOutline(ctx, courseBatchText, coords.courseBatch.x, coords.courseBatch.y, coords.courseBatch.color);
+                ctx.fillStyle = coords.courseBatch.color;
+                ctx.fillText(courseBatchText, coords.courseBatch.x, coords.courseBatch.y);
 
                 if (selectedTemplate.id === 'live' && timeInput) {
                     const time12Hour = convertTo12Hour(timeInput);
@@ -641,25 +620,28 @@
                     
                     ctx.font = `bold ${coords.datetime.fontSize}px Arial`;
                     ctx.textAlign = coords.datetime.align;
+                    ctx.fillStyle = coords.datetime.color;
                     
                     const lineHeight = coords.datetime.fontSize * 1.1;
                     const totalHeight = (dateTimeLines.length - 1) * lineHeight;
                     const startY = coords.datetime.y - (totalHeight / 2);
                     
                     dateTimeLines.forEach((line, index) => {
-                        drawTextWithOutline(ctx, line, coords.datetime.x, startY + (index * lineHeight), coords.datetime.color);
+                        ctx.fillText(line, coords.datetime.x, startY + (index * lineHeight));
                     });
                 } else if (coords.date) {
                     ctx.font = `bold ${coords.date.fontSize}px Arial`;
                     ctx.textAlign = coords.date.align;
-                    drawTextWithOutline(ctx, formattedDate, coords.date.x, coords.date.y, coords.date.color);
+                    ctx.fillStyle = coords.date.color;
+                    ctx.fillText(formattedDate, coords.date.x, coords.date.y);
                 }
 
                 if (coords.subject && selectedTemplate.fields.includes('subject')) {
                     const subjectFontSize = calculateDynamicFontSize(selectedSubject, coords.subject.fontSize, 30);
                     ctx.font = `bold ${subjectFontSize}px Arial`;
                     ctx.textAlign = coords.subject.align;
-                    drawTextWithOutline(ctx, selectedSubject, coords.subject.x, coords.subject.y, coords.subject.color);
+                    ctx.fillStyle = coords.subject.color;
+                    ctx.fillText(selectedSubject, coords.subject.x, coords.subject.y);
                 }
 
                 if (coords.chapter && selectedTemplate.fields.includes('chapter')) {
@@ -676,13 +658,15 @@
                     if (coords.totalQuestions && totalQuestions) {
                         ctx.font = `bold ${coords.totalQuestions.fontSize}px Arial`;
                         ctx.textAlign = coords.totalQuestions.align;
-                        drawTextWithOutline(ctx, `Total Questions: ${totalQuestions}`, coords.totalQuestions.x, coords.totalQuestions.y, coords.totalQuestions.color);
+                        ctx.fillStyle = coords.totalQuestions.color;
+                        ctx.fillText(`Total Questions: ${totalQuestions}`, coords.totalQuestions.x, coords.totalQuestions.y);
                     }
                     
                     if (coords.totalDuration && totalDuration) {
                         ctx.font = `bold ${coords.totalDuration.fontSize}px Arial`;
                         ctx.textAlign = coords.totalDuration.align;
-                        drawTextWithOutline(ctx, `Duration: ${totalDuration} min`, coords.totalDuration.x, coords.totalDuration.y, coords.totalDuration.color);
+                        ctx.fillStyle = coords.totalDuration.color;
+                        ctx.fillText(`Duration: ${totalDuration} min`, coords.totalDuration.x, coords.totalDuration.y);
                     }
                 }
             }
